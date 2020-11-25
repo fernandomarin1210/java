@@ -1,0 +1,94 @@
+package com.example.threadsalter;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+
+public class MainActivity extends AppCompatActivity {
+
+    private Button botaoIniciar;
+    private int numero;
+    private boolean pararExecucao = false;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        botaoIniciar = findViewById(R.id.buttonIniciar);
+
+    }
+
+    public void iniciarThread(View view){
+
+        pararExecucao = false;
+
+        //MyThread thread = new MyThread();
+        //thread.start();
+
+        MyRunnable runnable = new MyRunnable();
+        new Thread( runnable ).start();
+
+    }
+
+    public void pararThread(View view) {
+
+        pararExecucao = true;
+
+    }
+
+    class MyRunnable implements Runnable{
+
+        @Override
+        public void run() {
+
+            for ( int i = 0; i <= 15; i++){
+
+                if (pararExecucao){
+                    return;
+                }
+
+                Log.d("Thread", "contador: " + i);
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                numero = i;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        botaoIniciar.setText("contador: " + numero);
+                    }
+                });
+
+
+            }
+
+        }
+
+    }
+
+    class MyThread extends Thread {
+
+        @Override
+        public void run() {
+
+            for ( int i = 0; i <= 15; i++){
+                Log.d("Thread", "contador: " + i);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+    }
+
+}
